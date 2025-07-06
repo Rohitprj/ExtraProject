@@ -15,13 +15,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTheme } from '@/contexts/ThemeContext';
 import { User, Shield, Lock } from 'lucide-react-native';
+import { AntDesign } from '@expo/vector-icons';
 import ThemedView from '@/components/ThemedView';
 import ThemedText from '@/components/ThemedText';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('admin@hospital.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const { theme, isDark } = useTheme();
 
@@ -170,8 +172,8 @@ export default function LoginScreen() {
   });
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LinearGradient
@@ -189,7 +191,11 @@ export default function LoginScreen() {
 
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <User size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+              <User
+                size={20}
+                color={theme.colors.textSecondary}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Email Address"
@@ -202,19 +208,36 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Lock size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+              <Lock
+                size={20}
+                color={theme.colors.textSecondary}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Password"
                 placeholderTextColor={theme.colors.placeholder}
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
               />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={{ paddingHorizontal: 12 }}
+              >
+                <AntDesign
+                  name={showPassword ? 'eye' : 'eyeo'}
+                  size={20}
+                  color="#666"
+                />
+              </TouchableOpacity>
             </View>
 
             <TouchableOpacity
-              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+              style={[
+                styles.loginButton,
+                loading && styles.loginButtonDisabled,
+              ]}
               onPress={handleLogin}
               disabled={loading}
             >
@@ -232,11 +255,11 @@ export default function LoginScreen() {
               </Link>
             </View>
 
-            <View style={styles.demoCredentials}>
+            {/* <View style={styles.demoCredentials}> 
               <Text style={styles.demoTitle}>Demo Credentials:</Text>
               <Text style={styles.demoText}>Email: admin@hospital.com</Text>
               <Text style={styles.demoText}>Password: admin123</Text>
-            </View>
+            </View>*/}
           </View>
         </ScrollView>
       </LinearGradient>
