@@ -11,7 +11,18 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Users, Search, Plus, Filter, Phone, Mail, Calendar, MapPin, CreditCard as Edit3, Trash2 } from 'lucide-react-native';
+import {
+  Users,
+  Search,
+  Plus,
+  Filter,
+  Phone,
+  Mail,
+  Calendar,
+  MapPin,
+  CreditCard as Edit3,
+  Trash2,
+} from 'lucide-react-native';
 import { patientsApi } from '@/utils/api';
 import { Patient } from '@/types';
 
@@ -22,11 +33,16 @@ export default function PatientsScreen() {
   const queryClient = useQueryClient();
   const { theme, isDark } = useTheme();
 
-  const { data: patientsResponse, isLoading, error } = useQuery({
+  const {
+    data: patientsResponse,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['patients', searchQuery],
     queryFn: async () => {
       const params = searchQuery ? { search: searchQuery } : undefined;
       const response = await patientsApi.getAll(params);
+      console.log('Patient data', response);
       return response;
     },
   });
@@ -53,45 +69,69 @@ export default function PatientsScreen() {
       `Are you sure you want to delete ${patient.firstName} ${patient.lastName}?`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
+        {
+          text: 'Delete',
           style: 'destructive',
-          onPress: () => deletePatientMutation.mutate(patient.id)
+          onPress: () => deletePatientMutation.mutate(patient.id),
         },
       ]
     );
   };
 
   const PatientCard = ({ patient }: { patient: Patient }) => (
-    <View style={[styles.patientCard, { 
-      backgroundColor: theme.colors.card,
-      shadowColor: theme.colors.shadow,
-    }]}>
+    <View
+      style={[
+        styles.patientCard,
+        {
+          backgroundColor: theme.colors.card,
+          shadowColor: theme.colors.shadow,
+        },
+      ]}
+    >
       <View style={styles.patientHeader}>
-        <View style={[styles.patientAvatar, { backgroundColor: theme.colors.primary }]}>
+        <View
+          style={[
+            styles.patientAvatar,
+            { backgroundColor: theme.colors.primary },
+          ]}
+        >
           <Text style={styles.patientInitials}>
-            {patient.firstName[0]}{patient.lastName[0]}
+            {patient.firstName[0]}
+            {patient.lastName[0]}
           </Text>
         </View>
         <View style={styles.patientInfo}>
           <Text style={[styles.patientName, { color: theme.colors.text }]}>
             {patient.firstName} {patient.lastName}
           </Text>
-          <Text style={[styles.patientAge, { color: theme.colors.textSecondary }]}>
-            Age: {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()}
+          <Text
+            style={[styles.patientAge, { color: theme.colors.textSecondary }]}
+          >
+            Age:{' '}
+            {new Date().getFullYear() -
+              new Date(patient.dateOfBirth).getFullYear()}
           </Text>
         </View>
         <View style={styles.patientActions}>
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: theme.colors.surface }]}
+            style={[
+              styles.actionButton,
+              { backgroundColor: theme.colors.surface },
+            ]}
             onPress={() => setEditingPatient(patient)}
           >
             <Edit3 size={16} color={theme.colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.actionButton, styles.deleteButton, { 
-              backgroundColor: isDark ? 'rgba(248, 113, 113, 0.2)' : '#FEF2F2' 
-            }]}
+            style={[
+              styles.actionButton,
+              styles.deleteButton,
+              {
+                backgroundColor: isDark
+                  ? 'rgba(248, 113, 113, 0.2)'
+                  : '#FEF2F2',
+              },
+            ]}
             onPress={() => handleDeletePatient(patient)}
           >
             <Trash2 size={16} color={theme.colors.error} />
@@ -102,36 +142,66 @@ export default function PatientsScreen() {
       <View style={styles.patientDetails}>
         <View style={styles.detailRow}>
           <Phone size={14} color={theme.colors.textSecondary} />
-          <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>{patient.phone}</Text>
+          <Text
+            style={[styles.detailText, { color: theme.colors.textSecondary }]}
+          >
+            {patient.phone}
+          </Text>
         </View>
         <View style={styles.detailRow}>
           <Mail size={14} color={theme.colors.textSecondary} />
-          <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>{patient.email}</Text>
+          <Text
+            style={[styles.detailText, { color: theme.colors.textSecondary }]}
+          >
+            {patient.email}
+          </Text>
         </View>
         <View style={styles.detailRow}>
           <Calendar size={14} color={theme.colors.textSecondary} />
-          <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.detailText, { color: theme.colors.textSecondary }]}
+          >
             DOB: {new Date(patient.dateOfBirth).toLocaleDateString()}
           </Text>
         </View>
         <View style={styles.detailRow}>
           <MapPin size={14} color={theme.colors.textSecondary} />
-          <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.detailText, { color: theme.colors.textSecondary }]}
+          >
             {patient.address.city}, {patient.address.state}
           </Text>
         </View>
       </View>
 
       {patient.currentMedications.length > 0 && (
-        <View style={[styles.medicationsSection, { borderTopColor: theme.colors.border }]}>
-          <Text style={[styles.medicationsTitle, { color: theme.colors.text }]}>Current Medications:</Text>
+        <View
+          style={[
+            styles.medicationsSection,
+            { borderTopColor: theme.colors.border },
+          ]}
+        >
+          <Text style={[styles.medicationsTitle, { color: theme.colors.text }]}>
+            Current Medications:
+          </Text>
           {patient.currentMedications.slice(0, 2).map((med, index) => (
-            <Text key={index} style={[styles.medicationText, { color: theme.colors.textSecondary }]}>
+            <Text
+              key={index}
+              style={[
+                styles.medicationText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               • {med.name} - {med.dosage}
             </Text>
           ))}
           {patient.currentMedications.length > 2 && (
-            <Text style={[styles.medicationText, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.medicationText,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               +{patient.currentMedications.length - 2} more
             </Text>
           )}
@@ -350,12 +420,13 @@ export default function PatientsScreen() {
             </View>
           </View>
         </LinearGradient>
-        
+
         <View style={styles.errorContainer}>
           <Users size={48} color={theme.colors.error} />
           <Text style={styles.errorTitle}>Connection Error</Text>
           <Text style={styles.errorText}>
-            Unable to connect to the server. Please check your internet connection and try again.
+            Unable to connect to the server. Please check your internet
+            connection and try again.
           </Text>
         </View>
       </View>
@@ -411,7 +482,9 @@ export default function PatientsScreen() {
             <Users size={48} color={theme.colors.disabled} />
             <Text style={styles.emptyTitle}>No Patients Found</Text>
             <Text style={styles.emptyText}>
-              {searchQuery ? 'Try adjusting your search' : 'Add your first patient to get started'}
+              {searchQuery
+                ? 'Try adjusting your search'
+                : 'Add your first patient to get started'}
             </Text>
           </View>
         ) : (
