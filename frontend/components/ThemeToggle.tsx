@@ -8,16 +8,23 @@ interface ThemeToggleProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export default function ThemeToggle({ showLabel = false, size = 'medium' }: ThemeToggleProps) {
+export default function ThemeToggle({
+  showLabel = false,
+  size = 'medium',
+}: ThemeToggleProps) {
   const { theme, themeMode, setThemeMode } = useTheme();
 
   const iconSize = size === 'small' ? 16 : size === 'medium' ? 20 : 24;
   const buttonSize = size === 'small' ? 32 : size === 'medium' ? 40 : 48;
 
-  const themeOptions: { mode: ThemeMode; icon: React.ComponentType<any>; label: string }[] = [
+  const themeOptions: {
+    mode: ThemeMode;
+    icon: React.ComponentType<any>;
+    label: string;
+  }[] = [
     { mode: 'light', icon: Sun, label: 'Light' },
     { mode: 'dark', icon: Moon, label: 'Dark' },
-    { mode: 'system', icon: Monitor, label: 'System' },
+    // { mode: 'system', icon: Monitor, label: 'System' },
   ];
 
   const styles = StyleSheet.create({
@@ -68,9 +75,7 @@ export default function ThemeToggle({ showLabel = false, size = 'medium' }: Them
             <Icon
               size={iconSize}
               color={
-                themeMode === mode
-                  ? '#FFFFFF'
-                  : theme.colors.textSecondary
+                themeMode === mode ? '#FFFFFF' : theme.colors.textSecondary
               }
             />
           </TouchableOpacity>
@@ -78,7 +83,7 @@ export default function ThemeToggle({ showLabel = false, size = 'medium' }: Them
       </View>
       {showLabel && (
         <Text style={styles.label}>
-          {themeOptions.find(option => option.mode === themeMode)?.label}
+          {themeOptions.find((option) => option.mode === themeMode)?.label}
         </Text>
       )}
     </View>
