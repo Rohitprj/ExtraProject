@@ -1,7 +1,8 @@
 import { SecureStorage } from './secure-storage';
 
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.187:3000/api';
+  process.env.EXPO_PUBLIC_API_URL ||
+  'https://patient-dashboard-pro-backend.onrender.com/api';
 
 interface ApiResponse<T = any> {
   success: boolean;
